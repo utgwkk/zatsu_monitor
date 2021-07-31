@@ -13,7 +13,7 @@ bin/$(NAME): $(SRCS)
 
 .PHONY: lambda
 lambda: bin/$(NAME)
-	zip zatsu_monitor.zip bin/*
+	zip -j zatsu_monitor.zip bin/*
 
 .PHONY: clean
 clean:
