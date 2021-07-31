@@ -49,7 +49,7 @@ func (s *StatusStore) GetDbStatus(key string) (int, error) {
 		return NotFoundKey, nil
 	}
 
-	statusCode, ok := result.Item["status_code"]
+	statusCode, ok := result.Item["StatusCode"]
 	if !ok {
 		return NotFoundKey, nil
 	}
