@@ -29,8 +29,6 @@ $ ./zatsu_monitor --help
 Usage of ./zatsu_monitor:
   -config string
     	Path to config file
-  -data string
-    	Path to data dir for cache
   -version
     	Whether showing version
 ```

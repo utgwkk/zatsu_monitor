@@ -13,12 +13,11 @@ var (
 	// Revision represents app revision (injected from ldflags)
 	Revision string
 )
-var configFile, dataDir string
+var configFile string
 var isPrintVersion bool
 
 func main() {
 	flag.StringVar(&configFile, "config", "", "Path to config file")
-	flag.StringVar(&dataDir, "data", "", "Path to data dir for cache")
 	flag.BoolVar(&isPrintVersion, "version", false, "Whether showing version")
 
 	flag.Parse()
@@ -28,7 +27,7 @@ func main() {
 		return
 	}
 
-	if len(configFile) == 0 || len(dataDir) == 0 {
+	if len(configFile) == 0 {
 		flag.PrintDefaults()
 		return
 	}
@@ -78,7 +77,7 @@ func perform(name string, values map[string]string) {
 
 	fmt.Printf("time:%v\tcheck_url:%s\tstatus:%d\tresponse_time:%f\terror:%v\n", time.Now(), checkURL, currentStatusCode, responseTime, httpError)
 
-	store := NewStatusStore(dataDir)
+	store := NewStatusStore()
 	beforeStatusCode, err := store.GetDbStatus(name)
 
 	if err != nil {
