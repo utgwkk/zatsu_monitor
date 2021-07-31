@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/endpoints"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 )
@@ -13,7 +14,9 @@ type StatusStore struct {
 	dynamoDB *dynamodb.DynamoDB
 }
 
-var awsSession = session.Must(session.NewSession())
+var awsSession = session.Must(session.NewSession(&aws.Config{
+	Region: aws.String(endpoints.ApNortheast1RegionID),
+}))
 var tableName = aws.String("ZatsuMonitor")
 
 const (
