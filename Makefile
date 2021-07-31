@@ -11,6 +11,10 @@ LDFLAGS := -ldflags="-s -w -X \"main.Version=$(VERSION)\" -X \"main.Revision=$(R
 bin/$(NAME): $(SRCS)
 	GO111MODULE=on go build $(LDFLAGS) -o bin/$(NAME)
 
+.PHONY: lambda
+lambda: bin/$(NAME)
+	zip zatsu_monitor.zip bin/*
+
 .PHONY: clean
 clean:
 	rm -rf bin/*
