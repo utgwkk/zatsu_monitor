@@ -1,9 +1,11 @@
 package main
 
 import (
-	"flag"
+	"context"
 	"fmt"
 	"time"
+
+	"github.com/aws/aws-lambda-go/lambda"
 )
 
 var (
@@ -13,26 +15,13 @@ var (
 	// Revision represents app revision (injected from ldflags)
 	Revision string
 )
-var configFile string
-var isPrintVersion bool
 
 func main() {
-	flag.StringVar(&configFile, "config", "", "Path to config file")
-	flag.BoolVar(&isPrintVersion, "version", false, "Whether showing version")
+	lambda.Start(lambdaHandler)
+}
 
-	flag.Parse()
-
-	if isPrintVersion {
-		printVersion()
-		return
-	}
-
-	if len(configFile) == 0 {
-		flag.PrintDefaults()
-		return
-	}
-
-	config, err := LoadConfigFromFile(configFile)
+func lambdaHandler(ctx context.Context) {
+	config, err := LoadConfigFromFile("./config.yml")
 
 	if err != nil {
 		panic(err)
@@ -58,7 +47,7 @@ func perform(name string, values map[string]string) {
 	case "slack":
 		notifier = NewSlackNotifier(values["api_token"], values["webhook_url"], values["user_name"], values["channel"])
 	default:
-		panic(fmt.Sprintf("Unknown type: %s in %s", notifierType, configFile))
+		panic(fmt.Sprintf("Unknown type: %s in %s", notifierType, "./config.yml"))
 	}
 
 	// If it does not exist even one expected key, skip
