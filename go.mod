@@ -3,6 +3,7 @@ module github.com/sue445/zatsu_monitor
 go 1.16
 
 require (
+	github.com/aws/aws-lambda-go v1.26.0
 	github.com/aws/aws-sdk-go v1.40.12
 	github.com/bluele/slack v0.0.0-20180528010058-b4b4d354a079
 	github.com/davecgh/go-spew v1.1.1 // indirect
