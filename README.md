@@ -95,12 +95,12 @@ github:
 
   # override common values
   check_url: "https://github.com/"
-  chennel: "#github"
+  channel: "#github"
 
 google:
   <<: *common
   check_url: "https://www.google.com/"
-  chennel: "#google"
+  channel: "#google"
 ```
 
 ## Development
