@@ -9,7 +9,7 @@ LDFLAGS := -ldflags="-s -w -X \"main.Version=$(VERSION)\" -X \"main.Revision=$(R
 .DEFAULT_GOAL := bin/$(NAME)
 
 bin/$(NAME): $(SRCS)
-	GO111MODULE=on go build $(LDFLAGS) -o bin/$(NAME)
+	CGO_ENABLED=0 GO111MODULE=on go build $(LDFLAGS) -o bin/$(NAME)
 
 .PHONY: lambda
 lambda: bin/$(NAME)
