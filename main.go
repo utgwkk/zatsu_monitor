@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"log/slog"
+	"os"
 	"time"
 
 	"github.com/aws/aws-lambda-go/lambda"
@@ -21,6 +23,9 @@ func main() {
 }
 
 func lambdaHandler(ctx context.Context) {
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
+
 	config, err := LoadConfigFromFile("./config.yml")
 
 	if err != nil {
@@ -64,7 +69,13 @@ func perform(name string, values map[string]string) {
 	end := time.Now()
 	responseTime := (end.Sub(start)).Seconds()
 
-	fmt.Printf("time:%v\tcheck_url:%s\tstatus:%d\tresponse_time:%f\terror:%v\n", time.Now(), checkURL, currentStatusCode, responseTime, httpError)
+	slog.Info(
+		"request finished",
+		slog.String("check_url", checkURL),
+		slog.Int("status", currentStatusCode),
+		slog.Float64("response_time", responseTime),
+		slog.Any("error", httpError),
+	)
 
 	store := NewStatusStore("unused")
 	beforeStatusCode, err := store.GetDbStatus(name)
@@ -93,7 +104,12 @@ func perform(name string, values map[string]string) {
 			HTTPError:         httpError,
 			ResponseTime:      responseTime,
 		}
-		notifier.PostStatus(&param)
+		if err := notifier.PostStatus(&param); err != nil {
+			slog.Error(
+				"failed to notify",
+				slog.Any("error", err),
+			)
+		}
 	}
 }
 
