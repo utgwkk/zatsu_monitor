@@ -25,7 +25,7 @@ const (
 )
 
 // NewStatusStore create new StatusStore instance
-func NewStatusStore() *StatusStore {
+func NewStatusStore(_ string) *StatusStore {
 	s := new(StatusStore)
 	s.dynamoDB = dynamodb.New(awsSession)
 	return s

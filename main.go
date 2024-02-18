@@ -66,7 +66,7 @@ func perform(name string, values map[string]string) {
 
 	fmt.Printf("time:%v\tcheck_url:%s\tstatus:%d\tresponse_time:%f\terror:%v\n", time.Now(), checkURL, currentStatusCode, responseTime, httpError)
 
-	store := NewStatusStore()
+	store := NewStatusStore("unused")
 	beforeStatusCode, err := store.GetDbStatus(name)
 
 	if err != nil {
