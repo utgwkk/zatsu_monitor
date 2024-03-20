@@ -48,7 +48,7 @@ func lambdaHandler(ctx context.Context) {
 			perform(name, values)
 		}(name, values)
 	}
-	wg.Done()
+	wg.Wait()
 	slog.Info("done")
 }
 
