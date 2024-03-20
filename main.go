@@ -23,7 +23,7 @@ func main() {
 }
 
 func lambdaHandler(ctx context.Context) {
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{AddSource: true}))
 	slog.SetDefault(logger)
 
 	config, err := LoadConfigFromFile("./config.yml")
