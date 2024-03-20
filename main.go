@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/aws/aws-lambda-go/lambda"
@@ -25,6 +26,7 @@ func main() {
 func lambdaHandler(ctx context.Context) {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{AddSource: true}))
 	slog.SetDefault(logger)
+	slog.Info("started")
 
 	config, err := LoadConfigFromFile("./config.yml")
 
@@ -32,9 +34,22 @@ func lambdaHandler(ctx context.Context) {
 		panic(err)
 	}
 
+	var wg sync.WaitGroup
 	for name, values := range config {
-		perform(name, values)
+		wg.Add(1)
+		go func(name string, values map[string]string){
+			defer func(){
+				if err := recover(); err != nil {
+					slog.Error("recovered from perform panic", slog.Any("error", err))
+				}
+			}()
+			defer wg.Done()
+
+			perform(name, values)
+		}(name, values)
 	}
+	wg.Done()
+	slog.Info("done")
 }
 
 func printVersion() {
