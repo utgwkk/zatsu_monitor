@@ -1,26 +1,28 @@
 package main
 
 import (
-	"github.com/stretchr/testify/assert"
+	"context"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestUtil_GetStatusCode_Ok(t *testing.T) {
-	actual, err := GetStatusCode("https://www.google.co.jp/")
+	actual, err := GetStatusCode(context.Background(), "https://www.google.co.jp/")
 
 	assert.NoError(t, err)
 	assert.Equal(t, 200, actual)
 }
 
 func TestUtil_GetStatusCode_HttpError(t *testing.T) {
-	actual, err := GetStatusCode("https://www.google.co.jp/aaa")
+	actual, err := GetStatusCode(context.Background(), "https://www.google.co.jp/aaa")
 
 	assert.NoError(t, err)
 	assert.Equal(t, 404, actual)
 }
 
 func TestUtil_GetStatusCode_NoSuchHost(t *testing.T) {
-	actual, err := GetStatusCode("https://aaaaaaaaaaaaaaa")
+	actual, err := GetStatusCode(context.Background(), "https://aaaaaaaaaaaaaaa")
 
 	assert.Error(t, err)
 	assert.Equal(t, 0, actual)

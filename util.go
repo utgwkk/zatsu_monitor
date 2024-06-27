@@ -1,10 +1,13 @@
 package main
 
-import "net/http"
+import (
+	"context"
+	"net/http"
+)
 
 // GetStatusCode checks and returns status code for URL
-func GetStatusCode(url string) (int, error) {
-	req, err := http.NewRequest("GET", url, nil)
+func GetStatusCode(ctx context.Context, url string) (int, error) {
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
 		return 0, err
 	}

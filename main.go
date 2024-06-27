@@ -26,7 +26,7 @@ func main() {
 func lambdaHandler(ctx context.Context) {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{AddSource: true}))
 	slog.SetDefault(logger)
-	slog.Info("started")
+	slog.InfoContext(ctx, "started")
 
 	config, err := LoadConfigFromFile("./config.yml")
 
@@ -45,18 +45,18 @@ func lambdaHandler(ctx context.Context) {
 			}()
 			defer wg.Done()
 
-			perform(name, values)
+			perform(ctx, name, values)
 		}(name, values)
 	}
 	wg.Wait()
-	slog.Info("done")
+	slog.InfoContext(ctx, "done")
 }
 
 func printVersion() {
 	fmt.Printf("zatsu_monitor %s, build %s\n", Version, Revision)
 }
 
-func perform(name string, values map[string]string) {
+func perform(ctx context.Context, name string, values map[string]string) {
 	notifierType := values["type"]
 
 	var notifier Notifier
@@ -80,11 +80,12 @@ func perform(name string, values map[string]string) {
 	checkURL := values["check_url"]
 
 	start := time.Now()
-	currentStatusCode, httpError := GetStatusCode(checkURL)
+	currentStatusCode, httpError := GetStatusCode(ctx, checkURL)
 	end := time.Now()
 	responseTime := (end.Sub(start)).Seconds()
 
-	slog.Info(
+	slog.InfoContext(
+		ctx,
 		"request finished",
 		slog.String("check_url", checkURL),
 		slog.Int("status", currentStatusCode),
@@ -120,7 +121,8 @@ func perform(name string, values map[string]string) {
 			ResponseTime:      responseTime,
 		}
 		if err := notifier.PostStatus(&param); err != nil {
-			slog.Error(
+			slog.ErrorContext(
+				ctx,
 				"failed to notify",
 				slog.Any("error", err),
 			)
