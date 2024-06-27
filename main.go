@@ -24,6 +24,9 @@ func main() {
 }
 
 func lambdaHandler(ctx context.Context) {
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{AddSource: true}))
 	slog.SetDefault(logger)
 	slog.InfoContext(ctx, "started")
