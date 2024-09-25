@@ -15,7 +15,8 @@ type StatusStore struct {
 }
 
 var awsSession = session.Must(session.NewSession(&aws.Config{
-	Region: aws.String(endpoints.ApNortheast1RegionID),
+	Region:  aws.String(endpoints.ApNortheast1RegionID),
+	Retryer: &Retryer{},
 }))
 var tableName = aws.String("ZatsuMonitor")
 

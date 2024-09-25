@@ -41,8 +41,8 @@ func lambdaHandler(ctx context.Context) {
 	var wg sync.WaitGroup
 	for name, values := range config {
 		wg.Add(1)
-		go func(name string, values map[string]string){
-			defer func(){
+		go func(name string, values map[string]string) {
+			defer func() {
 				if err := recover(); err != nil {
 					slog.Error("recovered from perform panic", slog.Any("error", err))
 				}
