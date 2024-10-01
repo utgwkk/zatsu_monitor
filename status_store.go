@@ -4,6 +4,7 @@ import (
 	"strconv"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/client"
 	"github.com/aws/aws-sdk-go/aws/endpoints"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
@@ -16,7 +17,15 @@ type StatusStore struct {
 
 var awsSession = session.Must(session.NewSession(&aws.Config{
 	Region:  aws.String(endpoints.ApNortheast1RegionID),
-	Retryer: &Retryer{},
+	Retryer: &Retryer{
+		DefaultRetryer: client.DefaultRetryer{
+			NumMaxRetries:    client.DefaultRetryerMaxNumRetries,
+			MinRetryDelay:    client.DefaultRetryerMinRetryDelay,
+			MinThrottleDelay: client.DefaultRetryerMinThrottleDelay,
+			MaxRetryDelay:    client.DefaultRetryerMaxRetryDelay,
+			MaxThrottleDelay: client.DefaultRetryerMaxThrottleDelay,
+		},
+	},
 }))
 var tableName = aws.String("ZatsuMonitor")
 
