@@ -9,6 +9,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+	"github.com/cockroachdb/errors"
 )
 
 // StatusStore represents current status cache store
@@ -45,7 +46,7 @@ func (s *StatusStore) GetDbStatus(key string) (int, error) {
 		TableName: tableName,
 	})
 	if err != nil {
-		return 0, err
+		return 0, errors.WithStack(err)
 	}
 
 	if result == nil {
@@ -84,5 +85,8 @@ func (s *StatusStore) SaveDbStatus(key string, statusCode int) error {
 		UpdateExpression: aws.String("SET #S = :s"),
 		TableName:        tableName,
 	})
-	return err
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	return nil
 }

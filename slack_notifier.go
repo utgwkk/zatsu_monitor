@@ -1,9 +1,8 @@
 package main
 
 import (
-	"errors"
 	"fmt"
-
+	"github.com/cockroachdb/errors"
 	"github.com/slack-go/slack"
 )
 
@@ -78,9 +77,14 @@ responseTime: %f sec`
 				Color:    attachmentColor,
 			}),
 		)
-		return err
-	} else if len(s.webhookURL) > 0 {
-		return slack.PostWebhook(s.webhookURL, &slack.WebhookMessage{
+		if err != nil {
+			return errors.WithStack(err)
+		}
+		return nil
+	}
+
+	if len(s.webhookURL) > 0 {
+		err := slack.PostWebhook(s.webhookURL, &slack.WebhookMessage{
 			Channel:   s.channel,
 			Username:  userName,
 			IconEmoji: iconEmoji,
@@ -88,8 +92,11 @@ responseTime: %f sec`
 				{Fallback: message, Text: message, Color: attachmentColor},
 			},
 		})
-
-	} else {
-		return errors.New("Either `api_token` or `webhook_url` is required")
+		if err != nil {
+			return errors.WithStack(err)
+		}
+		return nil
 	}
+
+	return errors.New("Either `api_token` or `webhook_url` is required")
 }

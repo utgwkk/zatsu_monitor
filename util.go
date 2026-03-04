@@ -3,20 +3,22 @@ package main
 import (
 	"context"
 	"net/http"
+
+	"github.com/cockroachdb/errors"
 )
 
 // GetStatusCode checks and returns status code for URL
 func GetStatusCode(ctx context.Context, url string) (int, error) {
 	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
 	if err != nil {
-		return 0, err
+		return 0, errors.WithStack(err)
 	}
 	req.Header.Add("User-Agent", "Zatsu_Monitor/"+Version+"("+Revision+")")
 
 	resp, err := http.DefaultClient.Do(req)
 
 	if err != nil {
-		return 0, err
+		return 0, errors.WithStack(err)
 	}
 	defer resp.Body.Close()
 

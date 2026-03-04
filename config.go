@@ -1,8 +1,9 @@
 package main
 
 import (
-	"gopkg.in/yaml.v2"
-	"io/ioutil"
+	"github.com/cockroachdb/errors"
+	"github.com/goccy/go-yaml"
+	"os"
 )
 
 // Config represents config file
@@ -14,7 +15,7 @@ func LoadConfigFromData(yamlData string) (Config, error) {
 
 	err := yaml.Unmarshal([]byte(yamlData), &c)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return c, nil
@@ -22,10 +23,10 @@ func LoadConfigFromData(yamlData string) (Config, error) {
 
 // LoadConfigFromFile load config from yaml file
 func LoadConfigFromFile(yamlFile string) (Config, error) {
-	buf, err := ioutil.ReadFile(yamlFile)
+	buf, err := os.ReadFile(yamlFile)
 
 	if err != nil {
-		return nil, err
+		return nil, errors.WithStack(err)
 	}
 
 	return LoadConfigFromData(string(buf))
